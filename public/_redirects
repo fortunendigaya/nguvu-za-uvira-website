@@ -1,0 +1,2 @@
+/articles/article-*.html /.netlify/functions/generate-article 200
+/article/* /.netlify/functions/generate-article 200

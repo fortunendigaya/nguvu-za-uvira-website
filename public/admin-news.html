@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>News Admin</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f8f8;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        color: #d32f2f;
+        text-align: center;
+      }
+      .container {
+        max-width: 900px;
+        margin: auto;
+      }
+      .card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background: #d32f2f;
+        color: white;
+        cursor: pointer;
+        margin-right: 5px;
+      }
+      button:hover {
+        background: #b71c1c;
+      }
+      button:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+      }
+      img {
+        max-width: 100px;
+        margin-right: 10px;
+        border-radius: 5px;
+      }
+      .news-list {
+        margin-top: 30px;
+      }
+      .news-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .actions button {
+        margin-left: 5px;
+      }
+      .avatar {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #d32f2f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .status {
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        text-align: center;
+        display: none;
+      }
+      .success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .loading {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+      }
+      .no-image {
+        width: 100px;
+        height: 60px;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-size: 12px;
+        margin-right: 10px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="avatar" onclick="goToSettings()">A</div>
+    <h1>News Admin Panel</h1>
+    <div class="container">
+      <div id="statusMessage" class="status"></div>
+
+      <h2>Add / Update News</h2>
+      <input
+        type="text"
+        id="imageUrl"
+        placeholder="Image URLs (separate with commas)"
+      />
+      <input type="text" id="title" placeholder="News Title" required />
+      <textarea id="content" placeholder="Content" required></textarea>
+      <button id="addNewsBtn">Add News</button>
+
+      <h2>Current News</h2>
+      <div class="news-list" id="newsList">
+        <div class="loading">Loading news...</div>
+      </div>
+    </div>
+
+    <script type="module">
+      // Import Firebase modules
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        getDocs,
+        deleteDoc,
+        doc,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBlbF6NWr6o0cft7WAStaiDacFHk1z8GdM",
+        authDomain: "nguvuza-uvira.firebaseapp.com",
+        projectId: "nguvuza-uvira",
+        storageBucket: "nguvuza-uvira.appspot.com",
+        messagingSenderId: "332817577268",
+        appId: "1:332817577268:web:2d54292c37293782d0e161",
+        measurementId: "G-7HRX3H3HRS",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const newsCollection = collection(db, "news");
+
+      // Global functions
+      window.deleteNews = deleteNews;
+      window.goToSettings = goToSettings;
+
+      function showStatus(message, isError = false) {
+        const statusEl = document.getElementById("statusMessage");
+        statusEl.textContent = message;
+        statusEl.className = `status ${isError ? "error" : "success"}`;
+        statusEl.style.display = "block";
+        setTimeout(() => {
+          statusEl.style.display = "none";
+        }, 5000);
+      }
+
+      async function addNews() {
+        const title = document.getElementById("title").value.trim();
+        const content = document.getElementById("content").value.trim();
+        let imageUrl = document.getElementById("imageUrl").value.trim();
+
+        if (!title || !content) {
+          showStatus("Title and content are required", true);
+          return;
+        }
+
+        const addButton = document.getElementById("addNewsBtn");
+        const originalText = addButton.textContent;
+        addButton.textContent = "Adding...";
+        addButton.disabled = true;
+
+        try {
+          // Convert ibb.co links to direct image URLs
+          let finalImageUrl = imageUrl;
+          if (imageUrl.includes("ibb.co")) {
+            // Extract the code from ibb.co link and convert to direct URL
+            const code = imageUrl.split("/").pop();
+            finalImageUrl = `https://i.ibb.co/${code}/image.jpg`;
+          }
+
+          // For multiple images, split and convert each one
+          const imageUrls = imageUrl
+            .split(",")
+            .map((url) => {
+              const trimmedUrl = url.trim();
+              if (trimmedUrl.includes("ibb.co")) {
+                const code = trimmedUrl.split("/").pop();
+                return `https://i.ibb.co/${code}/image.jpg`;
+              }
+              return trimmedUrl;
+            })
+            .filter((url) => url);
+
+          await addDoc(newsCollection, {
+            title: title,
+            content: content,
+            images: imageUrls, // Save as array
+            likes: 0,
+            comments: 0,
+            saved: false,
+            createdAt: new Date(),
+          });
+
+          showStatus("News added successfully!");
+
+          // Clear form
+          document.getElementById("title").value = "";
+          document.getElementById("content").value = "";
+          document.getElementById("imageUrl").value = "";
+
+          loadNews();
+        } catch (error) {
+          console.error("Error adding news:", error);
+          showStatus("Error adding news: " + error.message, true);
+        } finally {
+          addButton.textContent = originalText;
+          addButton.disabled = false;
+        }
+      }
+
+      async function loadNews() {
+        try {
+          const newsList = document.getElementById("newsList");
+          newsList.innerHTML = "<div class='loading'>Loading news...</div>";
+
+          const snapshot = await getDocs(newsCollection);
+
+          if (snapshot.empty) {
+            newsList.innerHTML =
+              "<p>No news found. Add some news to get started!</p>";
+            return;
+          }
+
+          newsList.innerHTML = "";
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const div = document.createElement("div");
+            div.className = "news-item card";
+
+            // Multiple images display
+            let imageHtml = '<div class="no-image">No Images</div>';
+            if (data.images && data.images.length > 0) {
+              imageHtml = data.images
+                .map(
+                  (img) =>
+                    `<img src="${img}" alt="${data.title}" style="max-width: 80px; margin-right: 5px;" />`
+                )
+                .join("");
+            } else if (data.image) {
+              // Fallback for old single image format
+              imageHtml = `<img src="${data.image}" alt="${data.title}" style="max-width: 100px;" />`;
+            }
+
+            div.innerHTML = `
+        <div style="display:flex;align-items:center;">
+          ${imageHtml}
+          <div style="margin-left: 15px;">
+            <strong>${data.title || "No Title"}</strong><br>
+            <small>${(data.content || "").substring(0, 100)}${
+              (data.content || "").length > 100 ? "..." : ""
+            }</small>
+            ${
+              data.image
+                ? `<br><small style="color: #666;">Image: ${data.image}</small>`
+                : ""
+            }
+          </div>
+        </div>
+        <div class="actions">
+          <button onclick="deleteNews('${docSnap.id}')">Delete</button>
+        </div>
+      `;
+            newsList.appendChild(div);
+          });
+        } catch (error) {
+          console.error("Error loading news:", error);
+          document.getElementById("newsList").innerHTML =
+            "<p class='error'>Error loading news. Please refresh the page.</p>";
+        }
+      }
+
+      async function deleteNews(id) {
+        if (confirm("Are you sure you want to delete this news?")) {
+          try {
+            await deleteDoc(doc(db, "news", id));
+            showStatus("News deleted successfully!");
+            loadNews();
+          } catch (error) {
+            console.error("Error deleting news:", error);
+            showStatus("Error deleting news: " + error.message, true);
+          }
+        }
+      }
+
+      function goToSettings() {
+        alert("Settings would open here");
+      }
+
+      // Start when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("addNewsBtn")
+          .addEventListener("click", addNews);
+        loadNews();
+      });
+    </script>
+  </body>
+</html>

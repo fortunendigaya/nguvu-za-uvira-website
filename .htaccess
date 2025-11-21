@@ -1,0 +1,7 @@
+RewriteEngine On
+
+# Redirect article-{id}.html to our PHP generator
+RewriteRule ^articles/article-([a-zA-Z0-9_-]+)\.html$ generate-article.php?id=$1 [L,QSA]
+
+# Optional: Pretty URLs for social media
+RewriteRule ^article/([a-zA-Z0-9_-]+)/?$ generate-article.php?id=$1 [L,QSA]

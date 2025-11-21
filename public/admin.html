@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Radio Program Admin</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #d32f2f;
+        --primary-dark: #b71c1c;
+        --secondary: #2c3e50;
+        --light: #f8f9fa;
+        --dark: #343a40;
+        --success: #28a745;
+        --warning: #ffc107;
+        --danger: #dc3545;
+        --gray: #6c757d;
+        --light-gray: #e9ecef;
+        --border-radius: 12px;
+        --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        --transition: all 0.25s ease;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: var(--dark);
+        line-height: 1.6;
+        margin: 0;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 20px auto;
+        padding: 20px;
+      }
+      header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 20px;
+        border-radius: var(--border-radius);
+        margin-bottom: 25px;
+        box-shadow: var(--box-shadow);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(10px);
+      }
+      .header-content h1 {
+        font-size: 24px;
+        margin-bottom: 6px;
+        font-weight: 700;
+      }
+      .header-content p {
+        opacity: 0.95;
+        margin: 0;
+        font-size: 14px;
+      }
+      .user-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+      .dashboard {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 20px;
+      }
+      .sidebar {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: var(--border-radius);
+        padding: 20px;
+        box-shadow: var(--box-shadow);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        color: var(--secondary);
+        margin-bottom: 8px;
+        transition: var(--transition);
+        font-weight: 500;
+      }
+      .nav-item:hover {
+        background: rgba(211, 47, 47, 0.1);
+        transform: translateX(5px);
+      }
+      .nav-item.active {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+      }
+      .main-content {
+        display: grid;
+        gap: 20px;
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: var(--border-radius);
+        padding: 20px;
+        box-shadow: var(--box-shadow);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--light-gray);
+        padding-bottom: 14px;
+      }
+      .card-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--secondary);
+      }
+      .btn {
+        padding: 12px 18px;
+        border-radius: var(--border-radius);
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        transition: var(--transition);
+        font-size: 14px;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 2px solid var(--light-gray);
+        color: var(--secondary);
+      }
+      .btn-outline:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 10px;
+      }
+      .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: var(--border-radius);
+        text-align: center;
+        box-shadow: var(--box-shadow);
+        border-left: 4px solid var(--primary);
+        transition: var(--transition);
+      }
+      .stat-card:hover {
+        transform: translateY(-3px);
+      }
+      .stat-number {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--secondary);
+        margin: 8px 0;
+      }
+      .stat-label {
+        color: var(--gray);
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .program-list {
+        margin-top: 16px;
+      }
+      .program-item {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        border-radius: var(--border-radius);
+        align-items: center;
+        border: 1px solid var(--light-gray);
+        margin-bottom: 10px;
+        transition: var(--transition);
+        background: white;
+      }
+      .program-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+      .program-title {
+        font-weight: 700;
+        color: var(--secondary);
+        font-size: 16px;
+      }
+      .program-meta {
+        color: var(--gray);
+        font-size: 14px;
+      }
+      .days-chip {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        background: var(--light-gray);
+        margin-right: 8px;
+        font-weight: 500;
+      }
+      .week-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .day-column {
+        background: #fff;
+        padding: 14px;
+        border-radius: var(--border-radius);
+        min-height: 200px;
+        border: 1px solid var(--light-gray);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .day-title {
+        font-weight: 700;
+        color: var(--secondary);
+        margin-bottom: 12px;
+        font-size: 15px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--primary);
+      }
+      table.schedule {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      table.schedule th,
+      table.schedule td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+        text-align: left;
+      }
+      table.schedule th {
+        background: var(--primary);
+        color: white;
+        font-weight: 600;
+      }
+      table.schedule tr:hover {
+        background: #f8f9fa;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+      }
+      .modal-content {
+        width: 90%;
+        max-width: 600px;
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        max-height: 85vh;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: modalSlideIn 0.3s ease;
+        display: flex;
+        flex-direction: column;
+      }
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .form-control {
+        width: 100%;
+        padding: 14px;
+        border: 2px solid #e9ecef;
+        border-radius: var(--border-radius);
+        font-size: 15px;
+        transition: var(--transition);
+        background: #f8f9fa;
+      }
+      .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: white;
+        box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+      }
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--secondary);
+      }
+      .checkbox-group {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin: 16px 0;
+      }
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .checkbox-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--primary);
+      }
+      .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: #dc3545;
+        color: white;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+      .featured-badge {
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #8a6d00;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        margin-left: 8px;
+      }
+      .current-show {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: var(--border-radius);
+        margin-bottom: 20px;
+        box-shadow: var(--box-shadow);
+      }
+      .current-show h3 {
+        margin: 0 0 10px 0;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--secondary);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .section-title i {
+        color: var(--primary);
+      }
+      @media (max-width: 980px) {
+        .dashboard {
+          grid-template-columns: 1fr;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .week-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 560px) {
+        .week-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+        .btn {
+          padding: 10px 14px;
+          font-size: 13px;
+        }
+      }
+
+      /* Sort Dropdown Styles */
+.sort-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 8px;
+  min-width: 200px;
+  z-index: 100;
+  margin-top: 5px;
+  border: 1px solid var(--light-gray);
+}
+
+.sort-option {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.sort-option:hover {
+  background: var(--light-gray);
+}
+
+.sort-option.active {
+  background: var(--primary);
+  color: white;
+}
+
+/* Ensure dropdown stays on top */
+.dashboard {
+  position: relative;
+  z-index: 1;
+}
+
+      /* Custom scrollbar for modal */
+        .modal-content::-webkit-scrollbar {
+        width: 6px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 3px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="header-content">
+          <h1>Radio Program Admin</h1>
+          <p>
+            Manage your radio station programs and schedule — Nguvuza Uvira FM
+          </p>
+        </div>
+        <div class="user-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+      </header>
+
+      <div class="dashboard">
+        <div class="sidebar">
+          <div class="nav-item active" data-section="dashboard">
+            <i class="fas fa-home"></i><span>Dashboard</span>
+          </div>
+          <div class="nav-item" data-section="add-program">
+            <i class="fas fa-plus-circle"></i><span>Add Program</span>
+          </div>
+          <div class="nav-item" data-section="program-list">
+            <i class="fas fa-list"></i><span>Program List</span>
+          </div>
+          <div class="nav-item" data-section="weekly-schedule">
+            <i class="fas fa-calendar-alt"></i><span>Weekly Schedule</span>
+          </div>
+          <div class="nav-item" data-section="featured-shows">
+            <i class="fas fa-star"></i><span>Featured Shows</span>
+          </div>
+        </div>
+
+        <div class="main-content">
+          <!-- Current Live Show Section -->
+          <div class="card" id="currentLiveCard">
+            <div class="section-title">
+              <i class="fas fa-broadcast-tower"></i>
+              Currently Live
+            </div>
+            <div id="currentLiveContent">
+              <div class="current-show">
+                <h3>
+                  <span class="live-indicator">
+                    <i class="fas fa-circle"></i> LIVE NOW
+                  </span>
+                  <span id="currentShowTitle">Loading current show...</span>
+                </h3>
+                <div id="currentShowDetails">Checking schedule...</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="dashboardCard">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Program Management</div>
+                <div style="font-size: 14px; color: var(--gray)">
+                  Add, edit and view your weekly radio schedule
+                </div>
+              </div>
+              <div style="display: flex; gap: 12px">
+                <button class="btn btn-primary" id="addProgramBtn">
+                  <i class="fas fa-plus"></i> Add New Show
+                </button>
+              </div>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div style="font-size: 24px; color: var(--primary)">
+                  <i class="fas fa-play-circle"></i>
+                </div>
+                <div class="stat-number" id="totalPrograms">0</div>
+                <div class="stat-label">Total Programs</div>
+              </div>
+              <div class="stat-card">
+                <div style="font-size: 24px; color: #f59e0b">
+                  <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-number" id="featuredPrograms">0</div>
+                <div class="stat-label">Featured Shows</div>
+              </div>
+              <div class="stat-card">
+                <div style="font-size: 24px; color: #06b6d4">
+                  <i class="fas fa-broadcast-tower"></i>
+                </div>
+                <div class="stat-number" id="currentPrograms">0</div>
+                <div class="stat-label">Live Now</div>
+              </div>
+            </div>
+
+                        <div style="margin-top: 20px">
+              <div
+                style="
+                  display: flex;
+                  gap: 10px;
+                  align-items: center;
+                  flex-wrap: wrap;
+                "
+              >
+                <button class="btn btn-outline active" data-filter="all">
+                  Show All
+                </button>
+                <button class="btn btn-outline" data-filter="featured">
+                  Featured Only
+                </button>
+                <button class="btn btn-outline" data-filter="today">
+                  Today's Shows
+                </button>
+                <!-- ADD THIS SORT BUTTON -->
+                <div style="position: relative; display: inline-block;">
+                  <button class="btn btn-outline" id="sortDropdownBtn">
+                    <i class="fas fa-sort"></i> Sort By
+                    <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 12px;"></i>
+                  </button>
+                  <div class="sort-dropdown" id="sortDropdown" style="display: none;">
+                    <button class="sort-option" data-sort="title-asc">
+                      <i class="fas fa-sort-alpha-down"></i> Title A-Z
+                    </button>
+                    <button class="sort-option" data-sort="title-desc">
+                      <i class="fas fa-sort-alpha-up"></i> Title Z-A
+                    </button>
+                    <button class="sort-option" data-sort="category">
+                      <i class="fas fa-tags"></i> Category
+                    </button>
+                    <button class="sort-option" data-sort="time">
+                      <i class="fas fa-clock"></i> Start Time
+                    </button>
+                    <button class="sort-option" data-sort="featured">
+                      <i class="fas fa-star"></i> Featured First
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="program-list"
+              id="programsList"
+              style="margin-top: 20px"
+            ></div>
+          </div>
+
+          <div class="card" id="weeklyScheduleCard" style="display: none">
+            <div class="card-header">
+              <div class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                Weekly Schedule
+              </div>
+            </div>
+
+            <div id="weekGridContainer">
+              <!-- week grid will be injected here -->
+            </div>
+
+            <div style="margin-top: 20px">
+              <table class="schedule" id="fullScheduleTable">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                    <th>Sun</th>
+                  </tr>
+                </thead>
+                <tbody id="scheduleBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card" id="featuredShowsCard" style="display: none">
+            <div class="card-header">
+              <div class="section-title">
+                <i class="fas fa-star"></i>
+                Featured Shows
+              </div>
+            </div>
+            <div id="featuredShowsList" class="program-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modern Add/Edit Program Modal -->
+    <div class="modal" id="programModal">
+      <div class="modal-content">
+        <div
+          style="
+            padding: 20px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(
+              135deg,
+              var(--primary),
+              var(--secondary)
+            );
+            color: white;
+          "
+        >
+          <div style="font-weight: 700; font-size: 18px" id="modalTitle">
+            Add New Program
+          </div>
+          <button
+            class="modal-close"
+            style="
+              background: none;
+              border: none;
+              font-size: 24px;
+              cursor: pointer;
+              color: white;
+            "
+          >
+            ×
+          </button>
+        </div>
+        <div style="padding: 20px; overflow-y: auto; flex: 1">
+          <form id="programForm">
+            <div class="form-group">
+              <label class="form-label">Program Title</label>
+              <input
+                class="form-control"
+                id="programTitle"
+                placeholder="Enter program title"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Host</label>
+              <input
+                class="form-control"
+                id="programHost"
+                placeholder="Enter host name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                id="programDescription"
+                rows="3"
+                placeholder="Enter program description"
+              ></textarea>
+            </div>
+
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px"
+            >
+              <div class="form-group">
+                <label class="form-label">Start Time</label>
+                <input
+                  type="time"
+                  id="programStartTime"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">End Time</label>
+                <input
+                  type="time"
+                  id="programEndTime"
+                  class="form-control"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Days of Week</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" value="monday" /> Mon
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" value="tuesday" /> Tue
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" value="wednesday" /> Wed
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" value="thursday" /> Thu
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" value="friday" /> Fri
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" value="saturday" /> Sat
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" value="sunday" /> Sun
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select id="programCategory" class="form-control">
+                <option value="music">Music</option>
+                <option value="talk">Talk</option>
+                <option value="news">News</option>
+                <option value="sports">Sports</option>
+                <option value="religious">Religious</option>
+                <option value="educational">Educational</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="general">General</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Program Image URL</label>
+              <input
+                class="form-control"
+                id="programImage"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="programFeatured" />
+                Feature this show
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="programCurrent" />
+                Set as currently playing
+              </label>
+            </div>
+          </form>
+        </div>
+        <div
+          style="
+            padding: 20px;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: #f8f9fa;
+            flex-shrink: 0;
+          "
+        >
+          <button class="btn btn-outline" id="cancelProgramBtn">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button class="btn btn-primary" id="saveProgramBtn">
+            <i class="fas fa-save"></i> Save Program
+          </button>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status" id="statusMessage" style="display: none"></div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        getDocs,
+        deleteDoc,
+        doc,
+        updateDoc,
+        query,
+        orderBy,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBlbF6NWr6o0cft7WAStaiDacFHk1z8GdM",
+        authDomain: "nguvuza-uvira.firebaseapp.com",
+        projectId: "nguvuza-uvira",
+        storageBucket: "nguvuza-uvira.appspot.com",
+        messagingSenderId: "332817577268",
+        appId: "1:332817577268:web:2d54292c37293782d0e161",
+        measurementId: "G-7HRX3H3HRS",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const programsCollection = collection(db, "radioSchedule");
+
+      // Global state
+        let programs = [];
+        let editingProgramId = null;
+        let currentFilter = "all";
+        let currentSort = "time"; // ADD THIS - default sort by time
+
+      
+
+      // DOM elements
+      const statusMessage = document.getElementById("statusMessage");
+      const programModal = document.getElementById("programModal");
+      const programForm = document.getElementById("programForm");
+      const programsList = document.getElementById("programsList");
+      const addProgramBtn = document.getElementById("addProgramBtn");
+      const saveProgramBtn = document.getElementById("saveProgramBtn");
+      const cancelProgramBtn = document.getElementById("cancelProgramBtn");
+      const modalCloseBtn = document.querySelector(".modal-close");
+      const weekGridContainer = document.getElementById("weekGridContainer");
+      const scheduleBody = document.getElementById("scheduleBody");
+      const featuredShowsList = document.getElementById("featuredShowsList");
+      const currentLiveContent = document.getElementById("currentLiveContent");
+
+      // Navigation setup
+      function setupNavigation() {
+        console.log("Setting up navigation...");
+        const navItems = document.querySelectorAll(".nav-item");
+        const sections = {
+          dashboard: document.getElementById("dashboardCard"),
+          "add-program": () => openProgramModal(),
+          "program-list": document.getElementById("dashboardCard"),
+          "weekly-schedule": document.getElementById("weeklyScheduleCard"),
+          "featured-shows": document.getElementById("featuredShowsCard"),
+        };
+
+        console.log("Navigation sections found:", sections);
+
+        navItems.forEach((item) => {
+          item.addEventListener("click", () => {
+            const section = item.dataset.section;
+
+            // Update active nav item
+            navItems.forEach((nav) => nav.classList.remove("active"));
+            item.classList.add("active");
+
+            // Handle section display
+            if (section === "add-program") {
+              // This opens the modal directly
+              openProgramModal();
+              // Keep dashboard active
+              document
+                .querySelector('[data-section="dashboard"]')
+                .classList.add("active");
+            } else {
+              // Hide all sections
+              Object.values(sections).forEach((sec) => {
+                if (typeof sec === "function") return;
+                if (sec) sec.style.display = "none";
+              });
+
+              // Show selected section
+              if (sections[section]) {
+                sections[section].style.display = "block";
+              }
+
+              /// Special handling for program list
+                if (section === "program-list") {
+                currentFilter = "all";
+                updateFilterButtons();
+                applySorting(); // CHANGE FROM filterPrograms() TO applySorting()
+                }
+            }
+          });
+        });
+
+        // Filter buttons
+        document.querySelectorAll("[data-filter]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            currentFilter = btn.dataset.filter;
+            updateFilterButtons();
+            filterPrograms();
+          });
+        });
+      }
+
+      function updateFilterButtons() {
+        document.querySelectorAll("[data-filter]").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.filter === currentFilter);
+        });
+      }
+
+      function filterPrograms() {
+        console.log("Filtering programs with filter:", currentFilter);
+        applySorting(); // This will handle both filtering and sorting
+        }
+
+      // Sort functionality
+function setupSorting() {
+  const sortDropdownBtn = document.getElementById('sortDropdownBtn');
+  const sortDropdown = document.getElementById('sortDropdown');
+  const sortOptions = document.querySelectorAll('.sort-option');
+
+  // Toggle dropdown
+  sortDropdownBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sortDropdown.style.display = sortDropdown.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // Handle sort selection
+  sortOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      currentSort = option.dataset.sort;
+      
+      // Update active state
+      sortOptions.forEach(opt => opt.classList.remove('active'));
+      option.classList.add('active');
+      
+      // Update button text
+      const icon = option.querySelector('i').className;
+      const text = option.textContent.trim();
+      sortDropdownBtn.innerHTML = `<i class="${icon}"></i> ${text} <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 12px;"></i>`;
+      
+      // Close dropdown and apply sort
+      sortDropdown.style.display = 'none';
+      applySorting();
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', () => {
+    sortDropdown.style.display = 'none';
+  });
+
+  // Prevent dropdown close when clicking inside
+  sortDropdown.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+}
+
+function applySorting() {
+  console.log("Applying sort:", currentSort);
+  let sortedPrograms = [...programs];
+
+  switch (currentSort) {
+    case 'title-asc':
+      sortedPrograms.sort((a, b) => a.title.localeCompare(b.title));
+      break;
+    case 'title-desc':
+      sortedPrograms.sort((a, b) => b.title.localeCompare(a.title));
+      break;
+    case 'category':
+      sortedPrograms.sort((a, b) => a.category.localeCompare(b.category));
+      break;
+    case 'featured':
+      sortedPrograms.sort((a, b) => {
+        if (a.isFeatured && !b.isFeatured) return -1;
+        if (!a.isFeatured && b.isFeatured) return 1;
+        return a.title.localeCompare(b.title);
+      });
+      break;
+    case 'time':
+    default:
+      sortedPrograms.sort((a, b) => a.startTime.localeCompare(b.startTime));
+      break;
+  }
+
+  // Apply current filter to sorted programs
+  filterAndDisplayPrograms(sortedPrograms);
+}
+
+function filterAndDisplayPrograms(sortedPrograms) {
+  let filtered = [...sortedPrograms];
+
+  // Apply current filter
+  switch (currentFilter) {
+    case "featured":
+      filtered = sortedPrograms.filter((p) => p.isFeatured);
+      break;
+    case "today":
+      const today = new Date()
+        .toLocaleString("en", { weekday: "long" })
+        .toLowerCase();
+      filtered = sortedPrograms.filter((p) => p.days && p.days.includes(today));
+      break;
+    case "all":
+    default:
+      filtered = sortedPrograms;
+  }
+
+  renderProgramList(filtered, programsList);
+}
+
+      // UI helpers
+      function showStatus(message, type = "success") {
+        statusMessage.textContent = message;
+        statusMessage.className = `status ${type}`;
+        statusMessage.style.display = "block";
+        setTimeout(() => {
+          statusMessage.style.display = "none";
+        }, 5000);
+      }
+
+      // Format helpers
+      function formatTime24ToDisplay(t) {
+        if (!t) return "";
+        const [h, m] = t.split(":").map(Number);
+        const ampm = h >= 12 ? "PM" : "AM";
+        const hh = h % 12 || 12;
+        return `${hh}:${String(m).padStart(2, "0")} ${ampm}`;
+      }
+
+      function getCurrentDay() {
+        return new Date()
+          .toLocaleString("en", { weekday: "long" })
+          .toLowerCase();
+      }
+
+      function getCurrentTime() {
+        const now = new Date();
+        return `${String(now.getHours()).padStart(2, "0")}:${String(
+          now.getMinutes()
+        ).padStart(2, "0")}`;
+      }
+
+      // Current live show detection
+      function updateCurrentLiveShow() {
+        const currentDay = getCurrentDay();
+        const currentTime = getCurrentTime();
+
+        console.log(
+          "Checking for live shows - Day:",
+          currentDay,
+          "Time:",
+          currentTime
+        );
+
+        // Reset all programs' isCurrent status first
+        programs.forEach((program) => {
+          program.isCurrent = false;
+        });
+
+        const currentShows = programs.filter((program) => {
+          if (!program.days || !program.days.includes(currentDay)) return false;
+
+          const isCurrent =
+            program.startTime <= currentTime && program.endTime > currentTime;
+          console.log(
+            `Program: ${program.title}, Start: ${program.startTime}, End: ${program.endTime}, IsCurrent: ${isCurrent}`
+          );
+          return isCurrent;
+        });
+
+        console.log("Found", currentShows.length, "current shows");
+
+        const currentLiveContent =
+          document.getElementById("currentLiveContent");
+
+        if (currentShows.length > 0) {
+          currentShows.forEach((show) => {
+            show.isCurrent = true; // Mark as current for display
+          });
+
+          // Show the first current show (you can modify this to show multiple)
+          const currentShow = currentShows[0];
+          document.getElementById("currentShowTitle").textContent =
+            currentShow.title;
+          document.getElementById("currentShowDetails").innerHTML = `
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center;">
+                <div><strong>Host:</strong></div>
+                <div>${currentShow.host}</div>
+                <div><strong>Time:</strong></div>
+                <div>${formatTime24ToDisplay(
+                  currentShow.startTime
+                )} - ${formatTime24ToDisplay(currentShow.endTime)}</div>
+                <div><strong>Category:</strong></div>
+                <div>${currentShow.category}</div>
+                <div><strong>Days:</strong></div>
+                <div>${(currentShow.days || [])
+                  .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+                  .join(", ")}</div>
+            </div>
+        `;
+        } else {
+          document.getElementById("currentShowTitle").textContent =
+            "No live program at the moment";
+          document.getElementById("currentShowDetails").textContent =
+            "Check back later for scheduled programs";
+        }
+
+        // Update current programs count
+        const currentProgramsCount = currentShows.length;
+        document.getElementById("currentPrograms").textContent =
+          currentProgramsCount;
+
+        // Refresh the program list to show live indicators
+        filterPrograms();
+      }
+
+      // Load programs from Firestore
+      async function loadPrograms() {
+        try {
+          console.log("Loading programs from Firestore...");
+          programsList.innerHTML =
+            "<div style='text-align: center; padding: 20px;'>Loading programs…</div>";
+          const q = query(programsCollection, orderBy("startTime"));
+          const snap = await getDocs(q);
+          programs = [];
+          let featuredCount = 0;
+
+          console.log("Found", snap.size, "documents");
+
+          snap.forEach((d) => {
+            const data = d.data();
+            console.log("Loading program:", data.title);
+            programs.push({
+              id: d.id,
+              title: data.title,
+              host: data.host,
+              description: data.description || "",
+              startTime: data.startTime,
+              endTime: data.endTime,
+              days: data.days || [],
+              isFeatured: data.isFeatured || false,
+              isCurrent: data.isCurrent || false,
+              category: data.category || "general",
+              image: data.image || "",
+            });
+            if (data.isFeatured) featuredCount++;
+          });
+
+          console.log("Total programs loaded:", programs.length);
+          console.log("Featured programs:", featuredCount);
+
+          document.getElementById("totalPrograms").textContent =
+            programs.length;
+          document.getElementById("featuredPrograms").textContent =
+            featuredCount;
+
+          // Update UI
+          updateCurrentLiveShow();
+          applySorting();
+          renderWeeklyGrid(programs);
+          buildFullScheduleTable(programs);
+          renderFeaturedShows();
+
+          // Start live updates
+          setInterval(updateCurrentLiveShow, 30000); // Update every 30 seconds
+        } catch (err) {
+          console.error("Error loading programs:", err);
+          programsList.innerHTML =
+            "<div class='error' style='text-align: center; padding: 20px; color: var(--danger);'>Error loading programs. Check console for details.</div>";
+        }
+      }
+
+      function renderProgramList(list, container) {
+        console.log("Rendering program list:", list.length, "programs");
+        container.innerHTML = "";
+
+        if (!list || !list.length) {
+          container.innerHTML =
+            "<div style='text-align: center; padding: 40px; color: var(--gray)'>No programs found</div>";
+          return;
+        }
+
+        list.forEach((p) => {
+          console.log("Rendering program:", p.title);
+          const el = document.createElement("div");
+          el.className = "program-item";
+          el.innerHTML = `
+            <div style="width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, var(--primary), var(--secondary));color:white;">
+                <i class="fas fa-broadcast-tower"></i>
+            </div>
+            <div style="flex:1">
+                <div class="program-title">
+                    ${p.title}
+                    ${
+                      p.isFeatured
+                        ? '<span class="featured-badge">FEATURED</span>'
+                        : ""
+                    }
+                </div>
+                <div class="program-meta">
+                    <span style="margin-right:12px"><i class="fas fa-user"></i> ${
+                      p.host
+                    }</span>
+                    <span style="margin-right:12px"><i class="fas fa-clock"></i> ${formatTime24ToDisplay(
+                      p.startTime
+                    )} - ${formatTime24ToDisplay(p.endTime)}</span>
+                    <span><i class="fas fa-calendar"></i> ${(p.days || [])
+                      .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+                      .join(", ")}</span>
+                    <div style="margin-top:8px">
+                        <span class="days-chip" style="background:#e3f2fd;color:#1976d2">${
+                          p.category
+                        }</span>
+                        ${
+                          p.isFeatured
+                            ? '<span class="days-chip" style="background:#fff3cd;color:#8a6d00">Featured</span>'
+                            : ""
+                        }
+                        ${
+                          p.isCurrent
+                            ? '<span class="days-chip" style="background:#d1fae5;color:#065f46">Live</span>'
+                            : ""
+                        }
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex;gap:8px">
+                <button class="btn btn-outline" onclick="editProgram('${
+                  p.id
+                }')"><i class="fas fa-edit"></i></button>
+                <button class="btn" style="background:var(--danger);color:white;" onclick="deleteProgram('${
+                  p.id
+                }')"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+          container.appendChild(el);
+        });
+      }
+
+      function renderFeaturedShows() {
+        const featured = programs.filter((p) => p.isFeatured);
+        console.log("Featured shows:", featured.length);
+        const featuredShowsList = document.getElementById("featuredShowsList");
+
+        if (!featured.length) {
+          featuredShowsList.innerHTML =
+            "<div style='text-align: center; padding: 40px; color: var(--gray)'>No featured shows yet. Mark some programs as featured to see them here.</div>";
+        } else {
+          renderProgramList(featured, featuredShowsList);
+        }
+      }
+
+      // Weekly grid and schedule table functions (keep existing)
+      function renderWeeklyGrid(list) {
+        const daysOrder = [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday",
+        ];
+        const perDay = {};
+        daysOrder.forEach((d) => (perDay[d] = []));
+        list.forEach((p) => {
+          (p.days || []).forEach((d) => {
+            if (!perDay[d]) perDay[d] = [];
+            perDay[d].push(p);
+          });
+        });
+
+        daysOrder.forEach((d) =>
+          perDay[d].sort((a, b) => a.startTime.localeCompare(b.startTime))
+        );
+
+        weekGridContainer.innerHTML = "";
+        const grid = document.createElement("div");
+        grid.className = "week-grid";
+
+        daysOrder.forEach((d) => {
+          const col = document.createElement("div");
+          col.className = "day-column";
+          col.innerHTML = `<div class="day-title">${
+            d.charAt(0).toUpperCase() + d.slice(1)
+          }</div>`;
+          if (!perDay[d].length) {
+            col.innerHTML += `<div style="color:var(--gray); text-align: center; padding: 20px;">No programs scheduled</div>`;
+          } else {
+            perDay[d].forEach((p) => {
+              const row = document.createElement("div");
+              row.style.marginBottom = "10px";
+              row.style.padding = "8px";
+              row.style.background = "#f8f9fa";
+              row.style.borderRadius = "6px";
+              row.innerHTML = `
+                <div style="font-weight:700; color: var(--secondary);">${formatTime24ToDisplay(
+                  p.startTime
+                )} — ${p.title}</div>
+                <div style="color:var(--gray);font-size:13px">${p.host} • ${
+                p.category
+              }</div>
+                ${
+                  p.isFeatured
+                    ? '<div style="font-size:11px; color: #f59e0b; margin-top: 4px;"><i class="fas fa-star"></i> Featured</div>'
+                    : ""
+                }
+              `;
+              col.appendChild(row);
+            });
+          }
+          grid.appendChild(col);
+        });
+
+        weekGridContainer.appendChild(grid);
+      }
+
+      function buildFullScheduleTable(list) {
+        const times = new Set();
+        list.forEach((p) => times.add(`${p.startTime}__${p.endTime}`));
+        const timeRows = Array.from(times).sort();
+        const days = [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday",
+        ];
+        scheduleBody.innerHTML = "";
+
+        timeRows.forEach((range) => {
+          const [start, end] = range.split("__");
+          const tr = document.createElement("tr");
+          const timeTd = document.createElement("td");
+          timeTd.textContent = `${formatTime24ToDisplay(
+            start
+          )} - ${formatTime24ToDisplay(end)}`;
+          timeTd.style.fontWeight = "600";
+          tr.appendChild(timeTd);
+
+          days.forEach((d) => {
+            const td = document.createElement("td");
+            const found = list.find(
+              (p) => p.startTime === start && (p.days || []).includes(d)
+            );
+            td.textContent = found ? found.title : "";
+            td.style.color = found ? "var(--secondary)" : "var(--gray)";
+            tr.appendChild(td);
+          });
+
+          scheduleBody.appendChild(tr);
+        });
+      }
+
+      // Edit / Delete functions
+      window.editProgram = async function (id) {
+        const p = programs.find((x) => x.id === id);
+        if (!p) return;
+        openProgramModal(p);
+      };
+
+      window.deleteProgram = async function (id) {
+        if (!confirm("Are you sure you want to delete this program?")) return;
+        try {
+          await deleteDoc(doc(db, "radioSchedule", id));
+          showStatus("Program deleted successfully");
+          loadPrograms();
+        } catch (err) {
+          console.error(err);
+          showStatus("Error deleting program: " + err.message, "error");
+        }
+      };
+
+      // Modal controls
+      function openProgramModal(program = null) {
+        editingProgramId = program ? program.id : null;
+        document.getElementById("modalTitle").textContent = program
+          ? "Edit Program"
+          : "Add New Program";
+        document.getElementById("programTitle").value = program
+          ? program.title
+          : "";
+        document.getElementById("programHost").value = program
+          ? program.host
+          : "Radio Team";
+        document.getElementById("programDescription").value = program
+          ? program.description
+          : "";
+        document.getElementById("programStartTime").value = program
+          ? program.startTime
+          : "";
+        document.getElementById("programEndTime").value = program
+          ? program.endTime
+          : "";
+        document.getElementById("programCategory").value = program
+          ? program.category
+          : "general";
+        document.getElementById("programImage").value = program
+          ? program.image
+          : "";
+        document.getElementById("programFeatured").checked = program
+          ? !!program.isFeatured
+          : false;
+        document.getElementById("programCurrent").checked = program
+          ? !!program.isCurrent
+          : false;
+
+        // days checkboxes
+        document
+          .querySelectorAll('#programForm input[type="checkbox"][value]')
+          .forEach((ch) => {
+            ch.checked =
+              program && program.days ? program.days.includes(ch.value) : false;
+          });
+
+        programModal.style.display = "flex";
+      }
+
+      function closeProgramModal() {
+        programModal.style.display = "none";
+        editingProgramId = null;
+        programForm.reset();
+      }
+
+      async function saveProgram(e) {
+        e?.preventDefault();
+        const title = document.getElementById("programTitle").value.trim();
+        const host =
+          document.getElementById("programHost").value.trim() || "Radio Team";
+        const description = document
+          .getElementById("programDescription")
+          .value.trim();
+        const startTime = document.getElementById("programStartTime").value;
+        const endTime = document.getElementById("programEndTime").value;
+        const category =
+          document.getElementById("programCategory").value || "general";
+        const image = document.getElementById("programImage").value.trim();
+        const isFeatured = document.getElementById("programFeatured").checked;
+        const isCurrent = document.getElementById("programCurrent").checked;
+
+        const days = Array.from(
+          document.querySelectorAll(
+            '#programForm input[type="checkbox"][value]:checked'
+          )
+        ).map((c) => c.value);
+
+        if (!title || !startTime || !endTime || !days.length) {
+          showStatus(
+            "Please fill in all required fields: Title, Start Time, End Time, and at least one day",
+            "error"
+          );
+          return;
+        }
+
+        const payload = {
+          title,
+          host,
+          description,
+          startTime,
+          endTime,
+          days,
+          category,
+          image,
+          isFeatured,
+          isCurrent,
+          createdAt: new Date(),
+        };
+
+        try {
+          if (editingProgramId) {
+            await updateDoc(
+              doc(db, "radioSchedule", editingProgramId),
+              payload
+            );
+            showStatus("Program updated successfully");
+          } else {
+            await addDoc(programsCollection, payload);
+            showStatus("Program added successfully");
+          }
+          closeProgramModal();
+          loadPrograms();
+        } catch (err) {
+          console.error(err);
+          showStatus("Error saving program: " + err.message, "error");
+        }
+      }
+
+      // Event listeners
+        document.addEventListener("DOMContentLoaded", () => {
+            setupNavigation();
+            setupSorting(); // ADD THIS LINE
+            loadPrograms();
+            addProgramBtn.addEventListener("click", () => openProgramModal());
+            saveProgramBtn.addEventListener("click", saveProgram);
+            cancelProgramBtn.addEventListener("click", closeProgramModal);
+            modalCloseBtn.addEventListener("click", closeProgramModal);
+
+            // Close modal when clicking outside
+            programModal.addEventListener("click", (e) => {
+                if (e.target === programModal) closeProgramModal();
+            });
+        });
+    </script>
+  </body>
+</html>
