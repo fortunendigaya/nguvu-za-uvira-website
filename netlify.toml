@@ -1,0 +1,13 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/articles/article-*"
+  to = "/.netlify/functions/generate-article"
+  status = 200
+
+[[redirects]]
+  from = "/article/*"
+  to = "/.netlify/functions/generate-article"
+  status = 200
